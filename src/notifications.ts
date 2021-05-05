@@ -9,7 +9,7 @@ const formatDate = (): string => {
 
 const getTitle = (label?: string): string => {
   const more = label ? ` (${label})` : '';
-  return `Smart Diff${more}`;
+  return `Checking keywords in diff ${more}`;
 };
 
 export const createRun = async (context: Context, result: Result, 
@@ -70,15 +70,18 @@ const pulls = okto.pulls.list({
 }*/
 const x = (await pulls).data
 console.log("FOUDN PULL REQUEST", x)
+if(result.passed){
 x.forEach(async issue=>{
 await okto.issues.createComment({
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: issue.number,
-    body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Warning'}
+    body: `## ${getTitle(label)}: 'Warning'
 ${result.summary}
 `,
   });
 
 })
+}
+
 };

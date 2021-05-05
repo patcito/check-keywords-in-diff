@@ -1,8 +1,8 @@
 {
-  "name": "diff-action",
+  "name": "check-keywords-in-diff",
   "version": "0.1.0",
   "private": true,
-  "description": "GitHub Action that compares two files, add tolerances, send notifications, etc",
+  "description": "GitHub Action that send notifications to PR if it detects certain keywords in diff",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
