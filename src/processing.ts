@@ -6,7 +6,6 @@ export type Result = {
   result: Inputs.Tolerance;
   passed: boolean;
   summary: string;
-  output: string;
 };
 
 type ToleranceLevelMap = Record<Inputs.Tolerance, number>;
@@ -24,53 +23,48 @@ const compareTolerance = (expected: Inputs.Tolerance, result: Inputs.Tolerance):
   return levels[result] >= levels[expected];
 };
 
-const getSummary = (passed: boolean, expected: Inputs.Tolerance, result: Inputs.Tolerance): string => {
+const getSummary = (passed: boolean, found: any): string => {
+  let summary= ""
+  Object.keys(found).forEach(key=>{
+    console.log()
+    summary += `Found ${found[key]} in file ${key} \n`
+  })
   if (!passed) {
-    return `Expected tolerance '${expected}' but got '${result}' instead`;
+    return summary;
   }
-  return `Check succeeded with tolerance test '${result}' (expected '${expected}' or better)`;
+  return `No keywords were found in this diff.`;
 };
 
 export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
-  const oldContent = fs.readFileSync(old, 'utf-8');
-  const newContent = fs.readFileSync(newPath, 'utf-8');
-  const diff = diffLines(oldContent, newContent);
-  let x =  execSync("git diff origin/main HEAD").toString();
-  //o = (op: GitError,err: string)=>{console.log(err,op)}
-  console.log("gitDiff", x)
-  const counts = {
-    added: 0,
-    removed: 0,
-  };
-  diff.forEach(change => {
-    const count = change.count ? change.count : 1;
-    if (change.added) {
-      counts.added += count;
-    }
-    if (change.removed) {
-      counts.removed += count;
-    }
+  let constants = ["test","shoop"];
+  let x = execSync("git diff origin/main HEAD").toString();
+  let found: any = {}
+  let currentFile = ""
+  x.split("\n").forEach((line) => {
+      if(line.includes("diff --git a")){
+          currentFile = line.split(" b/")[1]
+      }
+    constants.forEach((constant) => {
+      if (line.includes(constant)) {
+        console.log("line includes " + constant, currentFile);
+        found[currentFile] = constant
+      }
+    });
   });
+  let passed = true
+  Object.keys(found).forEach((key)=>{
+    console.log(`Found ${found[key]} in file ${key}`)
+    passed = false
+})
+console.log(found)
+
+
 
   let result = Inputs.Tolerance.Same;
-  if (counts.removed === 0 && counts.added === 0) {
-    result = Inputs.Tolerance.Same;
-  } else if (counts.removed === counts.added) {
-    result = Inputs.Tolerance.Mixed;
-  } else if (counts.removed > 0 && counts.added === 0) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.Worse : Inputs.Tolerance.Better;
-  } else if (counts.removed > 0 && counts.removed > counts.added) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.MixedWorse : Inputs.Tolerance.MixedBetter;
-  } else if (counts.added > 0 && counts.removed === 0) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.Better : Inputs.Tolerance.Worse;
-  } else if (counts.added > 0 && counts.added > counts.removed) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.MixedBetter : Inputs.Tolerance.MixedWorse;
-  }
-  const passed = compareTolerance(expected, result);
+
   return {
     result,
     passed,
-    summary: getSummary(passed, expected, result),
-    output: createTwoFilesPatch(old, newPath, oldContent, newContent),
+    summary: getSummary(passed, found),
   };
 };
