@@ -46,14 +46,14 @@ export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, ex
       }
     constants.forEach((constant) => {
       if (line.includes(constant)) {
-        console.log("line includes " + constant, currentFile);
+  //      console.log("line includes " + constant, currentFile);
         found[currentFile] = constant
       }
     });
   });
   let foundSomething = true
   Object.keys(found).forEach((key)=>{
-    console.log(`Found ${found[key]} in file ${key}`)
+//    console.log(`Found ${found[key]} in file ${key}`)
     foundSomething = false
 })
 console.log(found)
