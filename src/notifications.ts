@@ -45,12 +45,17 @@ console.log("inside not");
 
 const okto =   await getOctokit(token)
 console.log("inside yes", context.sha.toString());
-
-  const { data: PullRequest } = await okto.rest.pulls.get({
+console.log("inside yes REF", context.ref);
+  const { data: PullRequest } = await okto.pulls.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: 1
+  })
+    /*{
     owner: context.repo.owner,
     repo: context.repo.repo,
     head_sha: context.sha,
-});
+}*/
 console.log("FOUDN PULL REQUEST", PullRequest)
   /*await octokit.issues.createComment({
     owner: context.repo.owner,
