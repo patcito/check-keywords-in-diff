@@ -31,12 +31,7 @@ async function run(): Promise<void> {
   console.log("333333333333333333 notification", github)
   console.log("333333333333333333 context notification", github.context)
   console.log("333333333333333333 context issue notification", github.context.issue)
-        if (issueId || issueId === 0) {
-  console.log("44444444444444 notification")
           await createComment(octokit, github.context, result,  inputs.notifications.token, inputs.notifications.label);
-        } else {
-          core.debug(`Notification: no issue id`);
-        }
       }
     }
 
