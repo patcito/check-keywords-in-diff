@@ -1,7 +1,7 @@
-import github from '@actions/github';
+import igithub, {getOctokit} from '@actions/github';
 import {Result} from './processing';
 import {Context} from '@actions/github/lib/context';
-import { context } from '@actions/github/lib/utils';
+import { context, GitHub } from '@actions/github/lib/utils';
 
 const formatDate = (): string => {
   return new Date().toISOString();
@@ -17,7 +17,7 @@ export const createRun = async (context: Context, result: Result,
   
   label?: string): Promise<void> => {
   const title = getTitle(label);
-  const octokit =   await github.getOctokit(token)
+  const octokit =   await getOctokit(token)
 
   await octokit.checks.create({
     owner: context.repo.owner,
@@ -42,8 +42,7 @@ export const createComment = async (
 ): Promise<void> => {
   console.log("creating notification")
 
-const okto =   await github.getOctokit(token)
-const context = await github.context
+const okto =   await getOctokit(token)
 
   const { data: PullRequest } = await okto.rest.pulls.get({
     owner: context.repo.owner,
