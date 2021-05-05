@@ -35,6 +35,7 @@ export const createComment = async (
   result: Result,
   label?: string,
 ): Promise<void> => {
+  console.log("creating notification")
   await octokit.issues.createComment({
     owner: context.repo.owner,
     repo: context.repo.repo,
