@@ -18,7 +18,6 @@ async function run(): Promise<void> {
     if (inputs.notifications) {
   console.log("11111creating notification")
       core.debug(`Setting up OctoKit`);
-      github.context
       if (inputs.notifications.check) {
         core.debug(`Notification: Check Run`);
 //        await createRun(octokit, octokit, result,   inputs.notifications.label);
