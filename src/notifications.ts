@@ -70,12 +70,15 @@ const pulls = okto.pulls.list({
 }*/
 const x = (await pulls).data
 console.log("FOUDN PULL REQUEST", x)
-  /*await octokit.issues.createComment({
+x.forEach(async issue=>{
+await okto.issues.createComment({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    issue_number: context.issue.number,
+    issue_number: issue.number,
     body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Warning'}
 ${result.summary}
 `,
-  });*/
+  });
+
+})
 };
