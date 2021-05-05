@@ -33,12 +33,14 @@ const getSummary = (passed: boolean, expected: Inputs.Tolerance, result: Inputs.
   return `Check succeeded with tolerance test '${result}' (expected '${expected}' or better)`;
 };
 
-export const processDiff = async (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
+export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
   const oldContent = fs.readFileSync(old, 'utf-8');
   const newContent = fs.readFileSync(newPath, 'utf-8');
   const diff = diffLines(oldContent, newContent);
   const diffOptions: TaskOptions<Options> = ["origin/main", "HEAD"]
-  let gitDiff = await git.diff(diffOptions)
+  let o: SimpleGitTaskCallback<string>= (i: string|GitError|null)=>{console.log(i, "inside callback")}
+  //o = (op: GitError,err: string)=>{console.log(err,op)}
+  let gitDiff =  git.diff(diffOptions, o)
   console.log("gitDiff", gitDiff)
   const counts = {
     added: 0,
