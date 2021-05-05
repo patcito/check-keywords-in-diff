@@ -28,7 +28,9 @@ async function run(): Promise<void> {
       if (inputs.notifications.issue) {
         core.debug(`Notification: Issue`);
         const issueId = github.context.issue.number;
-  console.log("333333333333333333 notification")
+  console.log("333333333333333333 notification", github)
+  console.log("333333333333333333 context notification", github.context)
+  console.log("333333333333333333 context issue notification", github.context.issue)
         if (issueId || issueId === 0) {
   console.log("44444444444444 notification")
           await createComment(octokit, github.context, result, inputs.notifications.label);
