@@ -47,12 +47,12 @@ const okto =   await github.get(token)
     head_sha: context.sha,
 });
 console.log("FOUDN PULL REQUEST", PullRequest)
-  await octokit.issues.createComment({
+  /*await octokit.issues.createComment({
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: context.issue.number,
     body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Warning'}
 ${result.summary}
 `,
-  });
+  });*/
 };
