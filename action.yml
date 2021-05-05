@@ -39,5 +39,5 @@ outputs:
   output:
     description: 'text of the diff'
 runs:
-  using: 'node13'
+  using: 'node11'
   main: 'dist/index.js'
