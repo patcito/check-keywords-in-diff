@@ -1,4 +1,4 @@
-import igithub, {getOctokit} from '@actions/github';
+import github, {getOctokit} from '@actions/github';
 import {Result} from './processing';
 import {Context} from '@actions/github/lib/context';
 import { context, GitHub } from '@actions/github/lib/utils';
@@ -46,17 +46,30 @@ console.log("inside not");
 const okto =   await getOctokit(token)
 console.log("inside yes", context.sha.toString());
 console.log("inside yes REF", context.ref);
+const pulls = okto.pulls.list({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+  state: 'open' ,
+  request: {
+   head: context.ref.split("/")[context.ref.split("/").length] 
+  }
+})
+/*
   const { data: PullRequest } = await okto.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    pull_number: 1
-  })
+    pull_number: 1,
+   request: {
+
+   } 
+  })*/
     /*{
     owner: context.repo.owner,
     repo: context.repo.repo,
     head_sha: context.sha,
 }*/
-console.log("FOUDN PULL REQUEST", PullRequest)
+const x = (await pulls).data
+console.log("FOUDN PULL REQUEST", x)
   /*await octokit.issues.createComment({
     owner: context.repo.owner,
     repo: context.repo.repo,
