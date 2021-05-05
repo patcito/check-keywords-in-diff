@@ -1,9 +1,7 @@
 import * as Inputs from './namespaces/Inputs';
 import {diffLines, createTwoFilesPatch} from 'diff';
 import fs from 'fs';
-import simpleGit, {Options, SimpleGit, TaskOptions, SimpleGitTaskCallback, GitError} from 'simple-git';
-const git: SimpleGit = simpleGit();
-
+import { execSync } from "child_process";
 export type Result = {
   result: Inputs.Tolerance;
   passed: boolean;
@@ -37,11 +35,9 @@ export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, ex
   const oldContent = fs.readFileSync(old, 'utf-8');
   const newContent = fs.readFileSync(newPath, 'utf-8');
   const diff = diffLines(oldContent, newContent);
-  const diffOptions: TaskOptions<Options> = ["origin/main", "HEAD"]
-  let o: SimpleGitTaskCallback<string, GitError>= (i: string|GitError|null)=>{console.log(i,  "inside callback")}
+  let x =  execSync("git diff origin/main HEAD").toString();
   //o = (op: GitError,err: string)=>{console.log(err,op)}
-  let gitDiff =  git.diff(diffOptions, o)
-  console.log("gitDiff", gitDiff)
+  console.log("gitDiff", x)
   const counts = {
     added: 0,
     removed: 0,
