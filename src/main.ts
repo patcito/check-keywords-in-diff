@@ -18,7 +18,7 @@ async function run(): Promise<void> {
     if (inputs.notifications) {
   console.log("11111creating notification")
       core.debug(`Setting up OctoKit`);
-
+      github.context
       if (inputs.notifications.check) {
         core.debug(`Notification: Check Run`);
 //        await createRun(octokit, octokit, result,   inputs.notifications.label);
@@ -28,7 +28,6 @@ async function run(): Promise<void> {
         core.debug(`Notification: Issue`);
   console.log("333333333333333333 notification", github)
   console.log("333333333333333333 context notification", github.context)
-  console.log("333333333333333333 context issue notification", github.context.issue)
           await createComment(github.context, result, inputs.notifications.token,  inputs.notifications.label);
       }
     }
