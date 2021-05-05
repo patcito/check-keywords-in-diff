@@ -22,7 +22,10 @@ async function run(): Promise<void> {
 //        await createRun(octokit, octokit, result,   inputs.notifications.label);
       }
   console.log("222222222222211111creating notification")
+  console.log("erwrwr",inputs.notifications.issue)
       if (inputs.notifications.issue) {
+        console.log("0000");
+        
         core.debug(`Notification: Issue`);
           await createComment( result, inputs.notifications.token,  inputs.notifications.label);
       }
