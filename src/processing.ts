@@ -1,6 +1,8 @@
 import * as Inputs from './namespaces/Inputs';
 import {diffLines, createTwoFilesPatch} from 'diff';
 import fs from 'fs';
+import simpleGit from 'simple-git';
+const git = simpleGit();
 
 export type Result = {
   result: Inputs.Tolerance;
@@ -35,7 +37,9 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
   const oldContent = fs.readFileSync(old, 'utf-8');
   const newContent = fs.readFileSync(newPath, 'utf-8');
   const diff = diffLines(oldContent, newContent);
-
+  git.diff("origin/main HEAD]", function(){
+      console.log("DIFF", diff)
+  }
   const counts = {
     added: 0,
     removed: 0,

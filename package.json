@@ -26,7 +26,8 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^2.1.1",
-    "diff": "^4.0.2"
+    "diff": "^4.0.2",
+    "simple-git": "latest"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
