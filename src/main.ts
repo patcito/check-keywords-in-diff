@@ -26,7 +26,6 @@ async function run(): Promise<void> {
   console.log("222222222222211111creating notification")
       if (inputs.notifications.issue) {
         core.debug(`Notification: Issue`);
-        const issueId = github.context.issue.number;
   console.log("333333333333333333 notification", github)
   console.log("333333333333333333 context notification", github.context)
   console.log("333333333333333333 context issue notification", github.context.issue)
