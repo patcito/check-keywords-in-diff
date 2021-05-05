@@ -1,8 +1,8 @@
 {
-  "name": "diff-action",
+  "name": "check-keywords-in-diff",
   "version": "0.1.0",
   "private": true,
-  "description": "GitHub Action that compares two files, add tolerances, send notifications, etc",
+  "description": "GitHub Action that send notifications to PR if it detects certain keywords in diff",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -21,12 +21,14 @@
     "actions",
     "diff"
   ],
-  "author": "Louis Brunner",
+  "author": "Patrick Aljord",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^2.1.1",
-    "diff": "^4.0.2"
+    "@actions/core": "latest",
+    "@actions/github": "latest",
+    "@types/node-fetch": "^2.5.10",
+    "node-fetch": "^2.6.1",
+    "string.prototype.matchall": "^4.0.4"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",

@@ -1,74 +1,106 @@
 import * as Inputs from './namespaces/Inputs';
-import {diffLines, createTwoFilesPatch} from 'diff';
-import fs from 'fs';
+import {execSync} from 'child_process';
+import fetch from 'node-fetch';
 
 export type Result = {
-  result: Inputs.Tolerance;
   passed: boolean;
   summary: string;
-  output: string;
 };
+const matchAll = require('string.prototype.matchall');
 
 type ToleranceLevelMap = Record<Inputs.Tolerance, number>;
-
-const levels: ToleranceLevelMap = {
-  [Inputs.Tolerance.Better]: 3,
-  [Inputs.Tolerance.Same]: 2,
-  [Inputs.Tolerance.MixedBetter]: 1,
-  [Inputs.Tolerance.Mixed]: -1,
-  [Inputs.Tolerance.MixedWorse]: -2,
-  [Inputs.Tolerance.Worse]: -3,
+type Token = {
+  address: string;
+  symbol: string;
+};
+type Vault = {
+  address: string;
+  symbol: string;
+  token: Token;
 };
 
-const compareTolerance = (expected: Inputs.Tolerance, result: Inputs.Tolerance): boolean => {
-  return levels[result] >= levels[expected];
-};
-
-const getSummary = (passed: boolean, expected: Inputs.Tolerance, result: Inputs.Tolerance): string => {
+const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[], foundConstants: any): string => {
+  let summary = '';
+  Object.keys(foundConstants).forEach(key => {
+    summary += `- Found constant \`${key}\` in files ${foundConstants[key].files.join(', ')}  \n`;
+  });
+  Object.keys(found).forEach(key => {
+    summary += `- Found keyword \`${key}\` in files ${found[key].files.join(', ')}  \n`;
+  });
+  Object.keys(foundAddresses).forEach(key => {
+    foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
+    vaults.map(v => {
+      if (v.address.toLowerCase() === key.toLowerCase()) {
+        foundAddresses[key].vault = v;
+        foundAddresses[key].origin = `is from vault \`${v.symbol}\``;
+      } else if (v.token.address.toLowerCase() === key.toLowerCase()) {
+        foundAddresses[key].token = v.token;
+        foundAddresses[key].origin = `is from token \`${v.token.symbol}\``;
+      }
+    });
+    summary += `- Found address [${key}](https://etherscan.io/address/${key}) in files ${foundAddresses[key].files.join(
+      ', ',
+    )}. This address ${foundAddresses[key].origin}  \n`;
+  });
   if (!passed) {
-    return `Expected tolerance '${expected}' but got '${result}' instead`;
+    return summary;
   }
-  return `Check succeeded with tolerance '${result}' (expected '${expected}' or better)`;
+  return `No important keywords were found in this diff.`;
 };
 
-export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
-  const oldContent = fs.readFileSync(old, 'utf-8');
-  const newContent = fs.readFileSync(newPath, 'utf-8');
-  const diff = diffLines(oldContent, newContent);
+export const processDiff = async (branch: string): Promise<Result> => {
+  let web3Interactions = ['web3', 'cacheSend'];
+  let x = execSync(`git diff origin/${branch} HEAD`).toString();
+  let found: any = {};
+  let currentFile = '';
+  let foundAddresses: any = {};
+  let foundConstants: any = {};
+  x.split('\n').forEach(l => {
+    let line: string = l;
+    if (line.includes('diff --git a')) {
+      currentFile = line.split(' b/')[1];
+    }
+    let ll: {} = l;
+    let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
+    let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
+    fc.forEach(constant => {
+      if (!foundConstants[constant] || !foundConstants[constant]?.files) {
+        foundConstants[constant] = {files: [`${currentFile} (\`${line}\`)`]};
+      } else if (Array.isArray(foundConstants[constant].files)) {
+        if (foundConstants[constant].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+          foundConstants[constant].files.push(`${currentFile} (\`${line}\`)`);
+      }
+    });
 
-  const counts = {
-    added: 0,
-    removed: 0,
-  };
-  diff.forEach(change => {
-    const count = change.count ? change.count : 1;
-    if (change.added) {
-      counts.added += count;
-    }
-    if (change.removed) {
-      counts.removed += count;
-    }
+    fa.forEach(address => {
+      if (!foundAddresses[address] || !foundAddresses[address]?.files) {
+        foundAddresses[address] = {files: [currentFile]};
+      } else if (Array.isArray(foundAddresses[address].files)) {
+        if (foundAddresses[address].files.indexOf(currentFile) === -1) foundAddresses[address].files.push(currentFile);
+      }
+    });
+
+    web3Interactions.forEach(web3Keyword => {
+      if (line.includes(web3Keyword)) {
+        if (!found[web3Keyword] || !found[web3Keyword]?.files) {
+          found[web3Keyword] = {files: [`${currentFile} (\`${line}\`)`]};
+        } else if (Array.isArray(found[web3Keyword].files)) {
+          if (found[web3Keyword].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+            found[web3Keyword].files.push(`${currentFile} (\`${line}\`)`);
+        }
+      }
+    });
+  });
+  let foundSomething = true;
+  Object.keys(found).forEach(key => {
+    foundSomething = false;
   });
 
-  let result = Inputs.Tolerance.Same;
-  if (counts.removed === 0 && counts.added === 0) {
-    result = Inputs.Tolerance.Same;
-  } else if (counts.removed === counts.added) {
-    result = Inputs.Tolerance.Mixed;
-  } else if (counts.removed > 0 && counts.added === 0) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.Worse : Inputs.Tolerance.Better;
-  } else if (counts.removed > 0 && counts.removed > counts.added) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.MixedWorse : Inputs.Tolerance.MixedBetter;
-  } else if (counts.added > 0 && counts.removed === 0) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.Better : Inputs.Tolerance.Worse;
-  } else if (counts.added > 0 && counts.added > counts.removed) {
-    result = mode == Inputs.Mode.Addition ? Inputs.Tolerance.MixedBetter : Inputs.Tolerance.MixedWorse;
-  }
-  const passed = compareTolerance(expected, result);
+  let passed = true;
+  const response = await fetch('https://vaults.finance/all');
+  const vaults: Vault[] = await response.json();
   return {
-    result,
     passed,
-    summary: getSummary(passed, expected, result),
-    output: createTwoFilesPatch(old, newPath, oldContent, newContent),
+    summary: getSummary(foundSomething, found, foundAddresses, vaults, foundConstants),
   };
 };
