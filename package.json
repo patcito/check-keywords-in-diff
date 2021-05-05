@@ -24,8 +24,8 @@
   "author": "Louis Brunner",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^2.1.1",
+    "@actions/core": "latest",
+    "@actions/github": "latest",
     "diff": "^4.0.2",
     "simple-git": "latest"
   },

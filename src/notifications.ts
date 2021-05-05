@@ -1,7 +1,7 @@
-import {GitHub} from '@actions/github';
+import github from '@actions/github';
 import {Result} from './processing';
 import {Context} from '@actions/github/lib/context';
-const github = require('@actions/github');
+import { context } from '@actions/github/lib/utils';
 
 const formatDate = (): string => {
   return new Date().toISOString();
@@ -12,8 +12,12 @@ const getTitle = (label?: string): string => {
   return `Smart Diff${more}`;
 };
 
-export const createRun = async (octokit: GitHub, context: Context, result: Result, label?: string): Promise<void> => {
+export const createRun = async (context: Context, result: Result, 
+ token: string,
+  
+  label?: string): Promise<void> => {
   const title = getTitle(label);
+  const octokit =   await github.getOctokit(token)
 
   await octokit.checks.create({
     owner: context.repo.owner,
@@ -32,7 +36,6 @@ export const createRun = async (octokit: GitHub, context: Context, result: Resul
 };
 
 export const createComment = async (
-  octokit: GitHub,
   context: Context,
   result: Result,
  token: string,
