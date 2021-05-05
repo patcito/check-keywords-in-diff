@@ -38,7 +38,7 @@ export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, ex
   const newContent = fs.readFileSync(newPath, 'utf-8');
   const diff = diffLines(oldContent, newContent);
   const diffOptions: TaskOptions<Options> = ["origin/main", "HEAD"]
-  let o: SimpleGitTaskCallback<string>= (i: string|GitError|null)=>{console.log(i, "inside callback")}
+  let o: SimpleGitTaskCallback<string, GitError>= (i: string|GitError|null)=>{console.log(i,  "inside callback")}
   //o = (op: GitError,err: string)=>{console.log(err,op)}
   let gitDiff =  git.diff(diffOptions, o)
   console.log("gitDiff", gitDiff)
