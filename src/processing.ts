@@ -32,7 +32,7 @@ const getSummary = (passed: boolean, found: any): string => {
   if (!passed) {
     return summary;
   }
-  return `No keywords were found in this diff.`;
+  return `No important keywords were found in this diff.`;
 };
 
 export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
@@ -54,7 +54,6 @@ export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, ex
   let passed = true
   Object.keys(found).forEach((key)=>{
     console.log(`Found ${found[key]} in file ${key}`)
-    passed = false
 })
 console.log(found)
 
@@ -64,7 +63,7 @@ console.log(found)
 
   return {
     result,
-    passed,
+    true,
     summary: getSummary(passed, found),
   };
 };
