@@ -30,7 +30,7 @@ const getSummary = (passed: boolean, expected: Inputs.Tolerance, result: Inputs.
   if (!passed) {
     return `Expected tolerance '${expected}' but got '${result}' instead`;
   }
-  return `Check succeeded with tolerance '${result}' (expected '${expected}' or better)`;
+  return `Check succeeded with tolerance test '${result}' (expected '${expected}' or better)`;
 };
 
 export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
