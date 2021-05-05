@@ -6,7 +6,9 @@ import {processDiff} from './processing';
 import {createRun, createComment} from './notifications';
 
 async function run(): Promise<void> {
+
   try {
+  console.log("000creating notification")
     core.debug(`Parsing inputs`);
     const inputs = parseInputs(core.getInput);
     console.log("inputs", inputs)
@@ -14,6 +16,7 @@ async function run(): Promise<void> {
     const result = processDiff(inputs.old, inputs.new, inputs.mode, inputs.tolerance);
 
     if (inputs.notifications) {
+  console.log("11111creating notification")
       core.debug(`Setting up OctoKit`);
       const octokit = new github.GitHub(inputs.notifications.token);
 
@@ -21,10 +24,13 @@ async function run(): Promise<void> {
         core.debug(`Notification: Check Run`);
         await createRun(octokit, github.context, result, inputs.notifications.label);
       }
+  console.log("222222222222211111creating notification")
       if (inputs.notifications.issue) {
         core.debug(`Notification: Issue`);
         const issueId = github.context.issue.number;
+  console.log("333333333333333333 notification")
         if (issueId || issueId === 0) {
+  console.log("44444444444444 notification")
           await createComment(octokit, github.context, result, inputs.notifications.label);
         } else {
           core.debug(`Notification: no issue id`);
