@@ -41,6 +41,7 @@ export const createComment = async (
   label?: string,
 ): Promise<void> => {
   console.log("creating notification")
+console.log("inside not");
 
 const okto =   await getOctokit(token)
 
