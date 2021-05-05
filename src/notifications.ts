@@ -44,6 +44,7 @@ export const createComment = async (
 console.log("inside not");
 
 const okto =   await getOctokit(token)
+console.log("inside yes", context.sha.toString());
 
   const { data: PullRequest } = await okto.rest.pulls.get({
     owner: context.repo.owner,
