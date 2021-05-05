@@ -40,7 +40,7 @@ export const createComment = async (
 ): Promise<void> => {
   console.log("creating notification")
 
-const okto =   await github.get(token)
+const okto =   await github.getOctokit(token)
   const { data: PullRequest } = await okto.rest.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
