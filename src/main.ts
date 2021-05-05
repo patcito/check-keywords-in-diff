@@ -38,16 +38,9 @@ async function run(): Promise<void> {
     }
     core.info(result.summary);
     core.info('===');
-    core.info(result.output);
 
     core.debug(`Setting outputs`);
     core.setOutput('passed', result.passed ? 'true' : 'false');
-    core.setOutput('output', result.output);
-
-    if (inputs.output) {
-      core.debug(`Setting outputs`);
-      fs.writeFileSync(inputs.output, result.output);
-    }
 
     core.debug(`Done`);
   } catch (error) {

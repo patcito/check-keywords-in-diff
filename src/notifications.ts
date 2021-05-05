@@ -25,7 +25,6 @@ export const createRun = async (octokit: GitHub, context: Context, result: Resul
     output: {
       title,
       summary: result.summary,
-      text: result.output,
     },
   });
 };
@@ -40,10 +39,8 @@ export const createComment = async (
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: context.issue.number,
-    body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Failure'}
+    body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Warning'}
 ${result.summary}
-
-${result.output}
 `,
   });
 };
