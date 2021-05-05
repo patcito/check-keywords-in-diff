@@ -36,7 +36,6 @@ export const createRun = async (context: Context, result: Result,
 };
 
 export const createComment = async (
-  context: Context,
   result: Result,
  token: string,
   label?: string,
@@ -44,6 +43,8 @@ export const createComment = async (
   console.log("creating notification")
 
 const okto =   await github.getOctokit(token)
+const context = await github.context
+
   const { data: PullRequest } = await okto.rest.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
