@@ -9,7 +9,7 @@ async function run(): Promise<void> {
   try {
     core.debug(`Parsing inputs`);
     const inputs = parseInputs(core.getInput);
-
+    console.log("inputs", inputs)
     core.debug(`Calculate result`);
     const result = processDiff(inputs.old, inputs.new, inputs.mode, inputs.tolerance);
 
