@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
+import github from '@actions/github';
 import fs from 'fs';
 import {parseInputs} from './inputs';
 import {processDiff} from './processing';
@@ -18,11 +18,10 @@ async function run(): Promise<void> {
     if (inputs.notifications) {
   console.log("11111creating notification")
       core.debug(`Setting up OctoKit`);
-      const octokit = new github.GitHub(inputs.notifications.token);
 
       if (inputs.notifications.check) {
         core.debug(`Notification: Check Run`);
-        await createRun(octokit, github.context, result, inputs.notifications.label);
+//        await createRun(octokit, octokit, result,   inputs.notifications.label);
       }
   console.log("222222222222211111creating notification")
       if (inputs.notifications.issue) {
@@ -31,7 +30,7 @@ async function run(): Promise<void> {
   console.log("333333333333333333 notification", github)
   console.log("333333333333333333 context notification", github.context)
   console.log("333333333333333333 context issue notification", github.context.issue)
-          await createComment(octokit, github.context, result,  inputs.notifications.token, inputs.notifications.label);
+          await createComment(github.context, result, inputs.notifications.token,  inputs.notifications.label);
       }
     }
 
