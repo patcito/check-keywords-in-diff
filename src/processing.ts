@@ -51,19 +51,18 @@ export const processDiff =  (old: string, newPath: string, mode: Inputs.Mode, ex
       }
     });
   });
-  let passed = true
+  let foundSomething = true
   Object.keys(found).forEach((key)=>{
     console.log(`Found ${found[key]} in file ${key}`)
+    foundSomething = false
 })
 console.log(found)
 
-
-
   let result = Inputs.Tolerance.Same;
-
+  let passed = true
   return {
     result,
-    true,
-    summary: getSummary(passed, found),
+    passed,
+    summary: getSummary(foundSomething, found),
   };
 };
