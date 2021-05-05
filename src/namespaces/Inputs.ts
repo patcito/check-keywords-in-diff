@@ -1,11 +1,4 @@
 export type Args = {
-  old: string;
-  new: string;
-
-  tolerance: Tolerance;
-  mode: Mode;
-  output?: string;
-
   notifications?: {
     token: string;
     label?: string;

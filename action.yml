@@ -1,4 +1,4 @@
-name: 'Smart Diff'
+name: 'check-keywords-in-diffs'
 description: 'Perform a diff between two files given a tolerance and send notifications'
 author: 'Louis Brunner'
 branding:

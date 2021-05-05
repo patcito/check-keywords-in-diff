@@ -1,6 +1,7 @@
-import {GitHub} from '@actions/github';
+import github, {getOctokit} from '@actions/github';
 import {Result} from './processing';
 import {Context} from '@actions/github/lib/context';
+import {context, GitHub} from '@actions/github/lib/utils';
 
 const formatDate = (): string => {
   return new Date().toISOString();
@@ -8,11 +9,19 @@ const formatDate = (): string => {
 
 const getTitle = (label?: string): string => {
   const more = label ? ` (${label})` : '';
-  return `Smart Diff${more}`;
+  return `Important changes detected ${more}`;
 };
 
-export const createRun = async (octokit: GitHub, context: Context, result: Result, label?: string): Promise<void> => {
+export const createRun = async (
+  context: Context,
+  result: Result,
+  token: string,
+
+  label?: string,
+): Promise<void> => {
   const title = getTitle(label);
+  const octokit = await getOctokit(token);
+
   await octokit.checks.create({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -25,25 +34,54 @@ export const createRun = async (octokit: GitHub, context: Context, result: Resul
     output: {
       title,
       summary: result.summary,
-      text: result.output,
     },
   });
 };
 
-export const createComment = async (
-  octokit: GitHub,
-  context: Context,
-  result: Result,
-  label?: string,
-): Promise<void> => {
-  await octokit.issues.createComment({
+export const createComment = async (result: Result, token: string, label?: string): Promise<void> => {
+  const okto = await getOctokit(token);
+  const pulls = okto.pulls.list({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    issue_number: context.issue.number,
-    body: `## ${getTitle(label)}: ${result.passed ? 'Success' : 'Failure'}
-${result.summary}
-
-${result.output}
-`,
+    state: 'open',
+    request: {
+      head: context.ref.split('/')[context.ref.split('/').length],
+    },
   });
+
+  /*
+  const { data: PullRequest } = await okto.pulls.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: 1,
+   request: {
+
+   } 
+  })*/
+  /*{
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    head_sha: context.sha,
+}*/
+  //https://vaults.finance/all
+
+  const x = (await pulls).data;
+  if (result.passed) {
+    x.forEach(async issue => {
+      const {data: PullRequest} = await okto.pulls.get({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        pull_number: issue.number,
+      });
+
+      await okto.issues.createComment({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        issue_number: issue.number,
+        body: `## ${getTitle(label)}
+${result.summary}
+`,
+      });
+    });
+  }
 };
