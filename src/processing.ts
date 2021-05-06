@@ -43,7 +43,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   Object.keys(foundAddresses).forEach(key => {
     console.log();
     vaults.map(v => {
-      console.log(v.address, key);
+      console.log(v.address, v.token.address, key);
       foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
       if (v.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].vault = v;
