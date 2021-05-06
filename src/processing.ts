@@ -67,7 +67,7 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
         if (!found[constant] || !found[constant]?.files) {
           found[constant] = {files: [currentFile]};
         } else if (Array.isArray(found[constant].files)) {
-          if (found[constant].indexOf(currentFile) === -1) found[constant].files.push(currentFile);
+          if (found[constant].files.indexOf(currentFile) === -1) found[constant].files.push(currentFile);
         }
       }
     });
