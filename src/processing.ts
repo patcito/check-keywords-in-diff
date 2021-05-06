@@ -21,18 +21,6 @@ type Vault = {
   symbol: string;
   token: Token;
 };
-const levels: ToleranceLevelMap = {
-  [Inputs.Tolerance.Better]: 3,
-  [Inputs.Tolerance.Same]: 2,
-  [Inputs.Tolerance.MixedBetter]: 1,
-  [Inputs.Tolerance.Mixed]: -1,
-  [Inputs.Tolerance.MixedWorse]: -2,
-  [Inputs.Tolerance.Worse]: -3,
-};
-
-const compareTolerance = (expected: Inputs.Tolerance, result: Inputs.Tolerance): boolean => {
-  return levels[result] >= levels[expected];
-};
 
 const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[]): string => {
   let summary = '';
