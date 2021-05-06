@@ -1,4 +1,5 @@
 export type Args = {
+  branch: string;
   notifications?: {
     token: string;
     label?: string;
