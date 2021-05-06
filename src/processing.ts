@@ -10,7 +10,15 @@ export type Result = {
 const matchAll = require('string.prototype.matchall');
 
 type ToleranceLevelMap = Record<Inputs.Tolerance, number>;
-
+type Token = {
+  address: string;
+  symbol: string;
+};
+type Vault = {
+  address: string;
+  symbol: string;
+  token: Token;
+};
 const levels: ToleranceLevelMap = {
   [Inputs.Tolerance.Better]: 3,
   [Inputs.Tolerance.Same]: 2,
@@ -24,7 +32,7 @@ const compareTolerance = (expected: Inputs.Tolerance, result: Inputs.Tolerance):
   return levels[result] >= levels[expected];
 };
 
-const getSummary = (passed: boolean, found: any, foundAddresses: any): string => {
+const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[]): string => {
   let summary = '';
   Object.keys(found).forEach(key => {
     console.log();
@@ -32,7 +40,19 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any): string =>
   });
   Object.keys(foundAddresses).forEach(key => {
     console.log();
-    summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}  \n`;
+    vaults.map(v => {
+      if (v.address.toLowerCase() === key.toLowerCase()) {
+        foundAddresses[key].vault = v;
+        foundAddresses[key].origin = `is from vault ${v.symbol}`;
+      } else if (v.token.address === key.toLowerCase()) {
+        foundAddresses[key].token = v.token;
+        foundAddresses[key].origin = `is from token ${v.token.symbol}`;
+      } else {
+        foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
+      }
+    });
+    summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}. This
+    address is from ${foundAddresses[key].origin}  \n`;
   });
   if (!passed) {
     return summary;
@@ -40,7 +60,12 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any): string =>
   return `No important keywords were found in this diff.`;
 };
 
-export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, expected: Inputs.Tolerance): Result => {
+export const processDiff = async (
+  old: string,
+  newPath: string,
+  mode: Inputs.Mode,
+  expected: Inputs.Tolerance,
+): Promise<Result> => {
   let constants = ['test', 'shoop'];
   let x = execSync('git diff origin/main HEAD').toString();
   let found: any = {};
@@ -81,9 +106,11 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
 
   let result = Inputs.Tolerance.Same;
   let passed = true;
+  const response = await fetch('https://vaults.finance/all');
+  const vaults: Vault[] = await response.json();
   return {
     result,
     passed,
-    summary: getSummary(foundSomething, found, foundAddresses),
+    summary: getSummary(foundSomething, found, foundAddresses, vaults),
   };
 };
