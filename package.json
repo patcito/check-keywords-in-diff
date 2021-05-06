@@ -27,7 +27,8 @@
     "@actions/core": "latest",
     "@actions/github": "latest",
     "diff": "^4.0.2",
-    "simple-git": "latest"
+    "simple-git": "latest",
+    "string.prototype.matchall": "^4.0.4"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
