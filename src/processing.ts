@@ -32,7 +32,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any): string =>
   });
   Object.keys(foundAddresses).forEach(key => {
     console.log();
-    summary += `Found address ${key} in files ${found[key].files.join(', ')}  \n`;
+    summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}  \n`;
   });
   if (!passed) {
     return summary;
