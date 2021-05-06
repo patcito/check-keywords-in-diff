@@ -39,12 +39,7 @@ export const createRun = async (
 };
 
 export const createComment = async (result: Result, token: string, label?: string): Promise<void> => {
-  console.log('creating notification');
-  console.log('inside not');
-
   const okto = await getOctokit(token);
-  console.log('inside yes', context.sha.toString());
-  console.log('inside yes REF', context.ref);
   const pulls = okto.pulls.list({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -71,7 +66,6 @@ export const createComment = async (result: Result, token: string, label?: strin
   //https://vaults.finance/all
 
   const x = (await pulls).data;
-  console.log('FOUDN PULL REQUEST', x);
   if (result.passed) {
     x.forEach(async issue => {
       const {data: PullRequest} = await okto.pulls.get({
@@ -79,6 +73,7 @@ export const createComment = async (result: Result, token: string, label?: strin
         repo: context.repo.repo,
         pull_number: issue.number,
       });
+
       await okto.issues.createComment({
         owner: context.repo.owner,
         repo: context.repo.repo,

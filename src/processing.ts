@@ -5,7 +5,6 @@ import {execSync} from 'child_process';
 import fetch from 'node-fetch';
 
 export type Result = {
-  result: Inputs.Tolerance;
   passed: boolean;
   summary: string;
 };
@@ -25,30 +24,18 @@ type Vault = {
 const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[], foundConstants: any): string => {
   let summary = '';
   Object.keys(foundConstants).forEach(key => {
-    console.log();
     summary += `- Found constant \`${key}\` in files ${foundConstants[key].files.join(', ')}  \n`;
   });
   Object.keys(found).forEach(key => {
-    console.log();
     summary += `- Found keyword \`${key}\` in files ${found[key].files.join(', ')}  \n`;
   });
   Object.keys(foundAddresses).forEach(key => {
-    console.log();
     foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
     vaults.map(v => {
-      console.log(
-        v.address.toLowerCase(),
-        v.token.address.toLowerCase(),
-        key.toLowerCase(),
-        v.address.toLowerCase() === key.toLowerCase(),
-        v.token.address.toLowerCase() === key.toLowerCase(),
-      );
       if (v.address.toLowerCase() === key.toLowerCase()) {
-        console.log('FOUND v');
         foundAddresses[key].vault = v;
         foundAddresses[key].origin = `is from vault \`${v.symbol}\``;
       } else if (v.token.address.toLowerCase() === key.toLowerCase()) {
-        console.log('FOUND token');
         foundAddresses[key].token = v.token;
         foundAddresses[key].origin = `is from token \`${v.token.symbol}\``;
       }
@@ -63,12 +50,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   return `No important keywords were found in this diff.`;
 };
 
-export const processDiff = async (
-  old: string,
-  newPath: string,
-  mode: Inputs.Mode,
-  expected: Inputs.Tolerance,
-): Promise<Result> => {
+export const processDiff = async (): Promise<Result> => {
   let web3Interactions = ['web3', 'cacheSend'];
   let x = execSync('git diff origin/main HEAD').toString();
   let found: any = {};
@@ -102,7 +84,6 @@ export const processDiff = async (
 
     web3Interactions.forEach(web3Keyword => {
       if (line.includes(web3Keyword)) {
-        //      console.log("line includes " + constant, currentFile);
         if (!found[web3Keyword] || !found[web3Keyword]?.files) {
           found[web3Keyword] = {files: [`${currentFile} (\`${line}\`)`]};
         } else if (Array.isArray(found[web3Keyword].files)) {
@@ -114,17 +95,13 @@ export const processDiff = async (
   });
   let foundSomething = true;
   Object.keys(found).forEach(key => {
-    //    console.log(`Found ${found[key]} in file ${key}`)
     foundSomething = false;
   });
-  console.log(found);
 
-  let result = Inputs.Tolerance.Same;
   let passed = true;
   const response = await fetch('https://vaults.finance/all');
   const vaults: Vault[] = await response.json();
   return {
-    result,
     passed,
     summary: getSummary(foundSomething, found, foundAddresses, vaults, foundConstants),
   };
