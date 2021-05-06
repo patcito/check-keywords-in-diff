@@ -5,7 +5,6 @@ export type Args = {
   tolerance: Tolerance;
   mode: Mode;
   output?: string;
-
   notifications?: {
     token: string;
     label?: string;

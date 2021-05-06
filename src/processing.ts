@@ -38,7 +38,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   let summary = '';
   Object.keys(found).forEach(key => {
     console.log();
-    summary += `Found keyword ${key} in files ${found[key].files.join(', ')}  \n`;
+    summary += `Found keyword \`${key}\` in files ${found[key].files.join(', ')}  \n`;
   });
   Object.keys(foundAddresses).forEach(key => {
     console.log();
@@ -54,11 +54,11 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
       if (v.address.toLowerCase() === key.toLowerCase()) {
         console.log('FOUND v');
         foundAddresses[key].vault = v;
-        foundAddresses[key].origin = `is from vault ${v.symbol}`;
+        foundAddresses[key].origin = `is from vault \`${v.symbol}\``;
       } else if (v.token.address.toLowerCase() === key.toLowerCase()) {
         console.log('FOUND token');
         foundAddresses[key].token = v.token;
-        foundAddresses[key].origin = `is from token ${v.token.symbol}`;
+        foundAddresses[key].origin = `is from token \`${v.token.symbol}\``;
       }
     });
     summary += `- Found address [${key}](https://etherscan.io/address/${key}) in files ${foundAddresses[key].files.join(
@@ -77,11 +77,12 @@ export const processDiff = async (
   mode: Inputs.Mode,
   expected: Inputs.Tolerance,
 ): Promise<Result> => {
-  let constants = ['test', 'shoop'];
+  let web3Interactions = ['web3', 'cacheSend'];
   let x = execSync('git diff origin/main HEAD').toString();
   let found: any = {};
   let currentFile = '';
   let foundAddresses: any = {};
+  let foundConstants: any = {};
   x.split('\n').forEach(l => {
     let line: string = l;
     if (line.includes('diff --git a')) {
@@ -89,6 +90,16 @@ export const processDiff = async (
     }
     let ll: {} = l;
     let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
+    let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
+    fc.forEach(constant => {
+      if (!foundConstants[constant] || !foundConstants[constant]?.files) {
+        foundConstants[constant] = {files: [currentFile]};
+      } else if (Array.isArray(foundConstants[constant].files)) {
+        if (foundConstants[constant].files.indexOf(currentFile) === -1)
+          foundConstants[constant].files.push(currentFile);
+      }
+    });
+
     fa.forEach(address => {
       if (!foundAddresses[address] || !foundAddresses[address]?.files) {
         foundAddresses[address] = {files: [currentFile]};
@@ -97,13 +108,14 @@ export const processDiff = async (
       }
     });
 
-    constants.forEach(constant => {
-      if (line.includes(constant)) {
+    web3Interactions.forEach(web3Keyword => {
+      if (line.includes(web3Keyword)) {
         //      console.log("line includes " + constant, currentFile);
-        if (!found[constant] || !found[constant]?.files) {
-          found[constant] = {files: [currentFile]};
-        } else if (Array.isArray(found[constant].files)) {
-          if (found[constant].files.indexOf(currentFile) === -1) found[constant].files.push(currentFile);
+        if (!found[web3Keyword] || !found[web3Keyword]?.files) {
+          found[web3Keyword] = {files: [currentFile]};
+        } else if (Array.isArray(found[web3Keyword].files)) {
+          if (found[web3Keyword].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+            found[web3Keyword].files.push(`${currentFile} (\`${line}\`)`);
         }
       }
     });
