@@ -9,7 +9,7 @@ const formatDate = (): string => {
 
 const getTitle = (label?: string): string => {
   const more = label ? ` (${label})` : '';
-  return `Checking keywords in diff ${more}`;
+  return `Important changes detected ${more}`;
 };
 
 export const createRun = async (
@@ -83,7 +83,7 @@ export const createComment = async (result: Result, token: string, label?: strin
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: issue.number,
-        body: `## ${getTitle(label)}: 'Warning'
+        body: `## ${getTitle(label)}
 ${result.summary}
 `,
       });

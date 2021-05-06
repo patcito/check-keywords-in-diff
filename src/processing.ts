@@ -100,7 +100,7 @@ export const processDiff = async (
       if (line.includes(web3Keyword)) {
         //      console.log("line includes " + constant, currentFile);
         if (!found[web3Keyword] || !found[web3Keyword]?.files) {
-          found[web3Keyword] = {files: [currentFile]};
+          found[web3Keyword] = {files: [`${currentFile} (\`${line}\`)`]};
         } else if (Array.isArray(found[web3Keyword].files)) {
           if (found[web3Keyword].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
             found[web3Keyword].files.push(`${currentFile} (\`${line}\`)`);
