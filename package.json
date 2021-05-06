@@ -21,15 +21,13 @@
     "actions",
     "diff"
   ],
-  "author": "Louis Brunner",
+  "author": "Patrick Aljord",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "latest",
     "@actions/github": "latest",
     "@types/node-fetch": "^2.5.10",
-    "diff": "^4.0.2",
     "node-fetch": "^2.6.1",
-    "simple-git": "latest",
     "string.prototype.matchall": "^4.0.4"
   },
   "devDependencies": {
