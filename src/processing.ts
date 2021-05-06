@@ -61,8 +61,9 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
         foundAddresses[key].origin = `is from token ${v.token.symbol}`;
       }
     });
-    summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}. This
-    address ${foundAddresses[key].origin}  \n`;
+    summary += `- Found address https://etherscan.io/address/${key} in files ${foundAddresses[key].files.join(
+      ', ',
+    )}. This address ${foundAddresses[key].origin}  \n`;
   });
   if (!passed) {
     return summary;
