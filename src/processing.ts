@@ -48,7 +48,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   return `No important keywords were found in this diff.`;
 };
 
-export const processDiff = async (branch: string): Promise<Result> => {
+export const processDiff = async (branch: string = 'main'): Promise<Result> => {
   let web3Interactions = ['web3', 'cacheSend'];
   let x = execSync(`git diff origin/${branch} HEAD`).toString();
   let found: any = {};
