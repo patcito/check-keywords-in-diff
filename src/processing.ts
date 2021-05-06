@@ -57,7 +57,7 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
       if (!foundAddresses[address] || !foundAddresses[address]?.files) {
         foundAddresses[address] = {files: [currentFile]};
       } else if (Array.isArray(foundAddresses[address].files)) {
-        foundAddresses[address].files.push(currentFile);
+        if (foundAddresses[address].files.indexOf(currentFile) === -1) foundAddresses[address].files.push(currentFile);
       }
     });
 
@@ -67,7 +67,7 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
         if (!found[constant] || !found[constant]?.files) {
           found[constant] = {files: [currentFile]};
         } else if (Array.isArray(found[constant].files)) {
-          found[constant].files.push(currentFile);
+          if (found[constant].indexOf(currentFile) === -1) found[constant].files.push(currentFile);
         }
       }
     });
