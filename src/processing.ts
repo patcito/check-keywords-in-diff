@@ -43,6 +43,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   Object.keys(foundAddresses).forEach(key => {
     console.log();
     vaults.map(v => {
+      console.log(v.address, key);
       if (v.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].vault = v;
         foundAddresses[key].origin = `is from vault ${v.symbol}`;
