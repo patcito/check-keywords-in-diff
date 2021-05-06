@@ -22,11 +22,21 @@ type Vault = {
   token: Token;
 };
 
-const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[]): string => {
+const getSummary = (
+  passed: boolean,
+  found: any,
+  foundAddresses: any,
+  vaults: Vault[],
+  foundConstants: string[],
+): string => {
   let summary = '';
+  Object.keys(foundConstants).forEach(key => {
+    console.log();
+    summary += `- Found constant \`${key}\` in files ${found[key].files.join(', ')}  \n`;
+  });
   Object.keys(found).forEach(key => {
     console.log();
-    summary += `Found keyword \`${key}\` in files ${found[key].files.join(', ')}  \n`;
+    summary += `- Found keyword \`${key}\` in files ${found[key].files.join(', ')}  \n`;
   });
   Object.keys(foundAddresses).forEach(key => {
     console.log();
@@ -81,10 +91,10 @@ export const processDiff = async (
     let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
     fc.forEach(constant => {
       if (!foundConstants[constant] || !foundConstants[constant]?.files) {
-        foundConstants[constant] = {files: [currentFile]};
+        foundConstants[constant] = {files: [`${currentFile} (\`${line}\`)`]};
       } else if (Array.isArray(foundConstants[constant].files)) {
-        if (foundConstants[constant].files.indexOf(currentFile) === -1)
-          foundConstants[constant].files.push(currentFile);
+        if (foundConstants[constant].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+          foundConstants[constant].files.push(`${currentFile} (\`${line}\`)`);
       }
     });
 
@@ -122,6 +132,6 @@ export const processDiff = async (
   return {
     result,
     passed,
-    summary: getSummary(foundSomething, found, foundAddresses, vaults),
+    summary: getSummary(foundSomething, found, foundAddresses, vaults, foundConstants),
   };
 };
