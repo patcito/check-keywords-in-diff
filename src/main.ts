@@ -5,29 +5,28 @@ import {processDiff} from './processing';
 import {createRun, createComment} from './notifications';
 
 async function run(): Promise<void> {
-
   try {
-  console.log("000creating notification")
+    console.log('000creating notification');
     core.debug(`Parsing inputs`);
     const inputs = parseInputs(core.getInput);
-    console.log("inputs", inputs)
+    console.log('inputs', inputs);
     core.debug(`Calculate result`);
-    const result = processDiff(inputs.old, inputs.new, inputs.mode, inputs.tolerance);
+    const result = await processDiff(inputs.old, inputs.new, inputs.mode, inputs.tolerance);
 
     if (inputs.notifications) {
-  console.log("11111creating notification")
+      console.log('11111creating notification');
       core.debug(`Setting up OctoKit`);
       if (inputs.notifications.check) {
         core.debug(`Notification: Check Run`);
-//        await createRun(octokit, octokit, result,   inputs.notifications.label);
+        //        await createRun(octokit, octokit, result,   inputs.notifications.label);
       }
-  console.log("222222222222211111creating notification")
-  console.log("erwrwr",inputs.notifications.issue)
+      console.log('222222222222211111creating notification');
+      console.log('erwrwr', inputs.notifications.issue);
       if (inputs.notifications.issue) {
-        console.log("0000");
-        
+        console.log('0000');
+
         core.debug(`Notification: Issue`);
-          await createComment( result, inputs.notifications.token,  inputs.notifications.label);
+        await createComment(result, inputs.notifications.token, inputs.notifications.label);
       }
     }
 
