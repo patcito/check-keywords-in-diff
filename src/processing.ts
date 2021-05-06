@@ -44,14 +44,13 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
     console.log();
     vaults.map(v => {
       console.log(v.address, key);
+      foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
       if (v.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].vault = v;
         foundAddresses[key].origin = `is from vault ${v.symbol}`;
       } else if (v.token.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].token = v.token;
         foundAddresses[key].origin = `is from token ${v.token.symbol}`;
-      } else {
-        foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
       }
     });
     summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}. This
