@@ -10,7 +10,7 @@ async function run(): Promise<void> {
     const inputs = parseInputs(core.getInput);
     console.log('inputs', inputs);
     core.debug(`Calculate result`);
-    const result = await processDiff();
+    const result = await processDiff(inputs.branch);
 
     if (inputs.notifications) {
       core.debug(`Setting up OctoKit`);
