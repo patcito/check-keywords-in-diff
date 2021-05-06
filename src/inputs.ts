@@ -9,7 +9,6 @@ export const parseInputs = (getInput: GetInput): Inputs.Args => {
   const mode = getInput('mode', {required: true}) as Inputs.Mode;
   const tolerance = getInput('tolerance', {required: true}) as Inputs.Tolerance;
   const output = getInput('output');
-
   if (!Object.values(Inputs.Mode).includes(mode)) {
     throw new Error(`invalid value for 'mode': '${mode}'`);
   }
