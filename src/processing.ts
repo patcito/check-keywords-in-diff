@@ -22,17 +22,11 @@ type Vault = {
   token: Token;
 };
 
-const getSummary = (
-  passed: boolean,
-  found: any,
-  foundAddresses: any,
-  vaults: Vault[],
-  foundConstants: string[],
-): string => {
+const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Vault[], foundConstants: any): string => {
   let summary = '';
   Object.keys(foundConstants).forEach(key => {
     console.log();
-    summary += `- Found constant \`${key}\` in files ${found[key].files.join(', ')}  \n`;
+    summary += `- Found constant \`${key}\` in files ${foundConstants[key].files.join(', ')}  \n`;
   });
   Object.keys(found).forEach(key => {
     console.log();
