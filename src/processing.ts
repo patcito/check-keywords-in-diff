@@ -54,8 +54,8 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
     let ll: {} = l;
     let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
     fa.forEach(address => {
-      if (!foundAddresses[address] || !foundAddresses[address].files) {
-        foundAddresses[address].files = [currentFile];
+      if (!foundAddresses[address] || !foundAddresses[address]?.files) {
+        foundAddresses[address] = {files: [currentFile]};
       } else if (Array.isArray(foundAddresses[address].files)) {
         foundAddresses[address].files.push(currentFile);
       }
@@ -64,8 +64,8 @@ export const processDiff = (old: string, newPath: string, mode: Inputs.Mode, exp
     constants.forEach(constant => {
       if (line.includes(constant)) {
         //      console.log("line includes " + constant, currentFile);
-        if (!found[constant] || !found[constant].files) {
-          found[constant].files = [currentFile];
+        if (!found[constant] || !found[constant]?.files) {
+          found[constant] = {files: [currentFile]};
         } else if (Array.isArray(found[constant].files)) {
           found[constant].files.push(currentFile);
         }
