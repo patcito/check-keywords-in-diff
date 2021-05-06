@@ -2,6 +2,8 @@ import * as Inputs from './namespaces/Inputs';
 import {diffLines, createTwoFilesPatch} from 'diff';
 import fs from 'fs';
 import {execSync} from 'child_process';
+import fetch from 'node-fetch';
+
 export type Result = {
   result: Inputs.Tolerance;
   passed: boolean;
