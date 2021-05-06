@@ -47,7 +47,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
       if (v.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].vault = v;
         foundAddresses[key].origin = `is from vault ${v.symbol}`;
-      } else if (v.token.address === key.toLowerCase()) {
+      } else if (v.token.address.toLowerCase() === key.toLowerCase()) {
         foundAddresses[key].token = v.token;
         foundAddresses[key].origin = `is from token ${v.token.symbol}`;
       } else {
