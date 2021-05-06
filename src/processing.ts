@@ -42,6 +42,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
   });
   Object.keys(foundAddresses).forEach(key => {
     console.log();
+    foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
     vaults.map(v => {
       console.log(
         v.address.toLowerCase(),
@@ -50,7 +51,6 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
         v.address.toLowerCase() === key.toLowerCase(),
         v.token.address.toLowerCase() === key.toLowerCase(),
       );
-      foundAddresses[key].origin = `was ⚠️not found⚠️ in any vaults from https://vaults.finance/all`;
       if (v.address.toLowerCase() === key.toLowerCase()) {
         console.log('FOUND v');
         foundAddresses[key].vault = v;
@@ -62,7 +62,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
       }
     });
     summary += `Found address ${key} in files ${foundAddresses[key].files.join(', ')}. This
-    address is from ${foundAddresses[key].origin}  \n`;
+    address ${foundAddresses[key].origin}  \n`;
   });
   if (!passed) {
     return summary;
