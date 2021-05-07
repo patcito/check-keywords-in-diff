@@ -40,31 +40,45 @@ export const createRun = async (
 
 export const createComment = async (result: Result, token: string, label?: string): Promise<void> => {
   const okto = await getOctokit(token);
-  const ref = context.ref.split('/')[context.ref.split('/').length - 1];
+  let ref = context.ref.split('/')[context.ref.split('/').length - 1];
   let owner = context.repo.owner;
   let repo = context.repo.repo;
+  let isRemote = false;
+  let number = 0;
   if (context.payload.pull_request?.base?.repo?.owner?.login) {
     owner = context.payload.pull_request?.base?.repo?.owner?.login;
     repo = context.payload.pull_request?.base?.repo?.name;
+    number = parseInt(context.ref.split('/')[2]);
+    isRemote = true;
   }
-  const pulls = okto.pulls.list({
-    owner: owner,
-    repo: repo,
-    state: 'open',
-    request: {
-      head: ref,
-    },
-  });
-  console.log('ref', ref);
-  console.log('full ref', context.ref);
-  console.log(
-    'payload',
-    context.payload.pull_request?.base?.repo?.owner?.login,
-    '/',
-    context.payload.pull_request?.base?.repo?.name,
-  );
-  console.log('context', context);
-  /*
+  if (isRemote) {
+    await okto.issues.createComment({
+      owner: owner,
+      repo: repo,
+      issue_number: number,
+      body: `## ${getTitle(label)}
+${result.summary}
+`,
+    });
+  } else {
+    const pulls = okto.pulls.list({
+      owner: owner,
+      repo: repo,
+      state: 'open',
+      request: {
+        head: ref,
+      },
+    });
+    console.log('ref', ref);
+    console.log('full ref', context.ref);
+    console.log(
+      'payload',
+      context.payload.pull_request?.base?.repo?.owner?.login,
+      '/',
+      context.payload.pull_request?.base?.repo?.name,
+    );
+    console.log('context', context);
+    /*
   const { data: PullRequest } = await okto.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -73,32 +87,33 @@ export const createComment = async (result: Result, token: string, label?: strin
 
    } 
   })*/
-  /*{
+    /*{
     owner: context.repo.owner,
     repo: context.repo.repo,
     head_sha: context.sha,
 }*/
-  //https://vaults.finance/all
+    //https://vaults.finance/all
 
-  const x = (await pulls).data;
-  if (result.passed) {
-    x.forEach(async issue => {
-      if (issue?.head?.ref === ref) {
-        const {data: PullRequest} = await okto.pulls.get({
-          owner: owner,
-          repo: repo,
-          pull_number: issue.number,
-        });
+    const x = (await pulls).data;
+    if (result.passed) {
+      x.forEach(async issue => {
+        if (issue?.head?.ref === ref) {
+          const {data: PullRequest} = await okto.pulls.get({
+            owner: owner,
+            repo: repo,
+            pull_number: issue.number,
+          });
 
-        await okto.issues.createComment({
-          owner: owner,
-          repo: repo,
-          issue_number: issue.number,
-          body: `## ${getTitle(label)}
+          await okto.issues.createComment({
+            owner: owner,
+            repo: repo,
+            issue_number: issue.number,
+            body: `## ${getTitle(label)}
 ${result.summary}
 `,
-        });
-      }
-    });
+          });
+        }
+      });
+    }
   }
 };
