@@ -93,16 +93,13 @@ export const processDiff = async (branch: string = 'main'): Promise<Result> => {
       }
     });
   });
-  let foundSomething = true;
-  Object.keys(found).forEach(key => {
-    foundSomething = false;
-  });
 
-  let passed = true;
+  let passed =
+    Object.keys(found).length > 0 || Object.keys(foundAddresses).length > 0 || Object.keys(foundConstants).length > 0;
   const response = await fetch('https://vaults.finance/all');
   const vaults: Vault[] = await response.json();
   return {
     passed,
-    summary: getSummary(foundSomething, found, foundAddresses, vaults, foundConstants),
+    summary: getSummary(passed, found, foundAddresses, vaults, foundConstants),
   };
 };
