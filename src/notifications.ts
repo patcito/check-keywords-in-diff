@@ -45,7 +45,7 @@ export const createComment = async (result: Result, token: string, label?: strin
     repo: context.repo.repo,
     state: 'open',
     request: {
-      head: context.ref.split('/')[context.ref.split('/').length],
+      head: context.ref.split('/')[context.ref.split('/').length - 1],
     },
   });
 
@@ -66,8 +66,8 @@ export const createComment = async (result: Result, token: string, label?: strin
   //https://vaults.finance/all
 
   console.log('REF', context.ref);
-  console.log('pulls', pulls);
   const x = (await pulls).data;
+  console.log('pulls', x);
   if (result.passed) {
     x.forEach(async issue => {
       const {data: PullRequest} = await okto.pulls.get({
