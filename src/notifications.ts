@@ -41,6 +41,12 @@ export const createRun = async (
 export const createComment = async (result: Result, token: string, label?: string): Promise<void> => {
   const okto = await getOctokit(token);
   const ref = context.ref.split('/')[context.ref.split('/').length - 1];
+  let owner = context.repo.owner;
+  let repo = context.repo.repo;
+  if (context.payload.pull_request?.base?.repo?.owner?.login) {
+    owner = context.payload.pull_request?.base?.repo?.owner?.login;
+    repo = context.payload.pull_request?.base?.repo?.name;
+  }
   const pulls = okto.pulls.list({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -77,14 +83,14 @@ export const createComment = async (result: Result, token: string, label?: strin
     x.forEach(async issue => {
       if (issue?.head?.ref === ref) {
         const {data: PullRequest} = await okto.pulls.get({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
+          owner: owner,
+          repo: repo,
           pull_number: issue.number,
         });
 
         await okto.issues.createComment({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
+          owner: owner,
+          repo: repo,
           issue_number: issue.number,
           body: `## ${getTitle(label)}
 ${result.summary}
