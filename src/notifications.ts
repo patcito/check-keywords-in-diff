@@ -45,7 +45,7 @@ export const createComment = async (result: Result, token: string, label?: strin
   let repo = context.repo.repo;
   let isRemote = false;
   let number = 0;
-  if (context.payload.pull_request?.base?.repo?.owner?.login) {
+  if (false && context.payload.pull_request?.base?.repo?.owner?.login) {
     owner = context.payload.pull_request?.base?.repo?.owner?.login;
     repo = context.payload.pull_request?.base?.repo?.name;
     number = parseInt(context.ref.split('/')[2]);
