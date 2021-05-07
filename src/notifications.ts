@@ -49,7 +49,7 @@ export const createComment = async (result: Result, token: string, label?: strin
       head: ref,
     },
   });
-  console.log('payload', context.payload);
+  console.log('payload', context.payload.pull_request?.base?.repo);
   console.log('context', context);
   /*
   const { data: PullRequest } = await okto.pulls.get({
