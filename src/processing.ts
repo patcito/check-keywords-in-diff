@@ -55,7 +55,9 @@ export const processDiff = async (branch: string = 'main'): Promise<Result> => {
   let currentFile = '';
   let foundAddresses: any = {};
   let foundConstants: any = {};
+  console.log('branch', branch);
   x.split('\n').forEach(l => {
+    console.log('line', l);
     let line: string = l;
     if (line.includes('diff --git a')) {
       currentFile = line.split(' b/')[1];
