@@ -56,6 +56,7 @@ export const createComment = async (result: Result, token: string, label?: strin
     },
   });
   console.log('ref', ref);
+  console.log('full ref', context.ref);
   console.log(
     'payload',
     context.payload.pull_request?.base?.repo?.owner?.login,
