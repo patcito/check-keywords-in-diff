@@ -48,13 +48,14 @@ export const createComment = async (result: Result, token: string, label?: strin
     repo = context.payload.pull_request?.base?.repo?.name;
   }
   const pulls = okto.pulls.list({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
+    owner: owner,
+    repo: repo,
     state: 'open',
     request: {
       head: ref,
     },
   });
+  console.log('ref', ref);
   console.log(
     'payload',
     context.payload.pull_request?.base?.repo?.owner?.login,
