@@ -65,7 +65,7 @@ export const createComment = async (result: Result, token: string, label?: strin
 }*/
   //https://vaults.finance/all
 
-  console.log('REF', context.ref.split('/')[context.ref.split('/').length]);
+  console.log('REF', context.ref);
   console.log('pulls', pulls);
   const x = (await pulls).data;
   if (result.passed) {
