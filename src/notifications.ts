@@ -66,9 +66,7 @@ export const createComment = async (result: Result, token: string, label?: strin
 }*/
   //https://vaults.finance/all
 
-  console.log('REF', context.ref);
   const x = (await pulls).data;
-  console.log('pulls', x);
   if (result.passed) {
     x.forEach(async issue => {
       if (issue?.head?.ref === ref) {
