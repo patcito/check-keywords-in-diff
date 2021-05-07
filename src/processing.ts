@@ -42,7 +42,7 @@ const getSummary = (passed: boolean, found: any, foundAddresses: any, vaults: Va
       ', ',
     )}. This address ${foundAddresses[key].origin}  \n`;
   });
-  if (!passed) {
+  if (passed) {
     return summary;
   }
   return `No important keywords were found in this diff.`;
