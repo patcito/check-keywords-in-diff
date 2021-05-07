@@ -1,43 +1,30 @@
-name: 'check-keywords-in-diffs'
-description: 'Perform a diff between two files given a tolerance and send notifications'
-author: 'Louis Brunner'
+name: "check-keywords-in-diffs"
+description: "Check diff for keywords and send notification to PR if it finds any"
+author: "Patrick Aljord"
 branding:
-  icon: 'plus-square'
-  color: 'green'
+  icon: "plus-square"
+  color: "green"
 inputs:
-  old:
-    description: 'first file to compare'
+  branch:
+    description: "name of base branch to compare to, usually main, master or develop"
     required: true
-  new:
-    description: 'second file to compare'
-    required: true
-  mode:
-    description: 'the mode used to measure the tolerance'
-    required: true
-  tolerance:
-    description: 'the tolerance used to judge if the diff improved'
-    required: false
-    default: 'better'
-  output:
-    description: 'write the diff to the given file'
-    required: false
   token:
-    description: 'your GITHUB_TOKEN, used when sending notifications'
+    description: "your GITHUB_TOKEN, used when sending notifications"
     required: false
   title:
-    description: 'add a title to the notifications to distinguish between multiple workflows/jobs'
+    description: "add a title to the notifications to distinguish between multiple workflows/jobs"
     required: false
   notify_issue:
-    description: 'send a notification to the linked issue/pullrequest with the output'
+    description: "send a notification to the linked issue/pullrequest with the output"
     required: false
   notify_check:
-    description: 'create a check run with the output'
+    description: "create a check run with the output"
     required: false
 outputs:
   passed:
-    description: 'boolean describing if the test passed or not'
+    description: "boolean describing if the test passed or not"
   output:
-    description: 'text of the diff'
+    description: "text of the diff"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
