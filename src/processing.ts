@@ -59,39 +59,42 @@ export const processDiff = async (branch: string = 'main'): Promise<Result> => {
   x.split('\n').forEach(l => {
     console.log('line', l);
     let line: string = l;
-    if (line.includes('diff --git a')) {
-      currentFile = line.split(' b/')[1];
-    }
-    let ll: {} = l;
-    let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
-    let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
-    fc.forEach(constant => {
-      if (!foundConstants[constant] || !foundConstants[constant]?.files) {
-        foundConstants[constant] = {files: [`${currentFile} (\`${line}\`)`]};
-      } else if (Array.isArray(foundConstants[constant].files)) {
-        if (foundConstants[constant].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
-          foundConstants[constant].files.push(`${currentFile} (\`${line}\`)`);
+    if ((l && l[0] === '-') || l[0] === '+') {
+      if (line.includes('diff --git a')) {
+        currentFile = line.split(' b/')[1];
       }
-    });
-
-    fa.forEach(address => {
-      if (!foundAddresses[address] || !foundAddresses[address]?.files) {
-        foundAddresses[address] = {files: [currentFile]};
-      } else if (Array.isArray(foundAddresses[address].files)) {
-        if (foundAddresses[address].files.indexOf(currentFile) === -1) foundAddresses[address].files.push(currentFile);
-      }
-    });
-
-    web3Interactions.forEach(web3Keyword => {
-      if (line.includes(web3Keyword)) {
-        if (!found[web3Keyword] || !found[web3Keyword]?.files) {
-          found[web3Keyword] = {files: [`${currentFile} (\`${line}\`)`]};
-        } else if (Array.isArray(found[web3Keyword].files)) {
-          if (found[web3Keyword].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
-            found[web3Keyword].files.push(`${currentFile} (\`${line}\`)`);
+      let ll: {} = l;
+      let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
+      let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
+      fc.forEach(constant => {
+        if (!foundConstants[constant] || !foundConstants[constant]?.files) {
+          foundConstants[constant] = {files: [`${currentFile} (\`${line}\`)`]};
+        } else if (Array.isArray(foundConstants[constant].files)) {
+          if (foundConstants[constant].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+            foundConstants[constant].files.push(`${currentFile} (\`${line}\`)`);
         }
-      }
-    });
+      });
+
+      fa.forEach(address => {
+        if (!foundAddresses[address] || !foundAddresses[address]?.files) {
+          foundAddresses[address] = {files: [currentFile]};
+        } else if (Array.isArray(foundAddresses[address].files)) {
+          if (foundAddresses[address].files.indexOf(currentFile) === -1)
+            foundAddresses[address].files.push(currentFile);
+        }
+      });
+
+      web3Interactions.forEach(web3Keyword => {
+        if (line.includes(web3Keyword)) {
+          if (!found[web3Keyword] || !found[web3Keyword]?.files) {
+            found[web3Keyword] = {files: [`${currentFile} (\`${line}\`)`]};
+          } else if (Array.isArray(found[web3Keyword].files)) {
+            if (found[web3Keyword].files.indexOf(`${currentFile} (\`${line}\`)`) === -1)
+              found[web3Keyword].files.push(`${currentFile} (\`${line}\`)`);
+          }
+        }
+      });
+    }
   });
 
   let passed =
