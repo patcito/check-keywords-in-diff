@@ -50,6 +50,20 @@ export const createComment = async (result: Result, token: string, label?: strin
     repo = context.payload.pull_request?.base?.repo?.name;
     number = parseInt(context.ref.split('/')[2]);
     isRemote = true;
+    await fetch('https://post-to-pr.vercel.app/api/postcomment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        owner: owner,
+        repo: repo,
+        issue_number: number,
+        summary: result.summary,
+        label: getTitle(label),
+      }),
+    });
+    return;
   }
   if (isRemote) {
     await okto.issues.createComment({
@@ -104,19 +118,6 @@ ${result.summary}
             pull_number: issue.number,
           });
           if (isRemote) {
-            await fetch('https://post-to-pr.vercel.app/api/postcomment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                owner: owner,
-                repo: repo,
-                issue_number: issue.number,
-                summary: result.summary,
-                label: getTitle(label),
-              }),
-            });
           } else
             await okto.issues.createComment({
               owner: owner,
