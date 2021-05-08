@@ -45,7 +45,7 @@ export const createComment = async (result: Result, token: string, label?: strin
   let repo = context.repo.repo;
   let isRemote = false;
   let number = 0;
-  if (false && context.payload.pull_request?.base?.repo?.owner?.login) {
+  if (context.payload.pull_request?.base?.repo?.owner?.login) {
     owner = context.payload.pull_request?.base?.repo?.owner?.login;
     repo = context.payload.pull_request?.base?.repo?.name;
     number = parseInt(context.ref.split('/')[2]);
@@ -103,15 +103,29 @@ ${result.summary}
             repo: repo,
             pull_number: issue.number,
           });
-
-          await okto.issues.createComment({
-            owner: owner,
-            repo: repo,
-            issue_number: issue.number,
-            body: `## ${getTitle(label)}
+          if (isRemote) {
+            await fetch('https://post-to-pr.vercel.app/api/postcomment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                owner: owner,
+                repo: repo,
+                issue_number: issue.number,
+                summary: result.summary,
+                label: getTitle(label),
+              }),
+            });
+          } else
+            await okto.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issue.number,
+              body: `## ${getTitle(label)}
 ${result.summary}
 `,
-          });
+            });
         }
       });
     }
