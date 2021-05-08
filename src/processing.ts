@@ -59,10 +59,10 @@ export const processDiff = async (branch: string = 'main'): Promise<Result> => {
   x.split('\n').forEach(l => {
     console.log('line', l);
     let line: string = l;
+    if (line.includes('diff --git a')) {
+      currentFile = line.split(' b/')[1];
+    }
     if ((l && l[0] === '-') || l[0] === '+') {
-      if (line.includes('diff --git a')) {
-        currentFile = line.split(' b/')[1];
-      }
       let ll: {} = l;
       let fa = [...matchAll(line, /0x[a-fA-F0-9]{40}/g)];
       let fc = [...matchAll(line, /\b[A-Z]+_[A-Z_]*[A-Z]\b/g)];
