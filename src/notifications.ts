@@ -2,6 +2,7 @@ import github, {getOctokit} from '@actions/github';
 import {Result} from './processing';
 import {Context} from '@actions/github/lib/context';
 import {context, GitHub} from '@actions/github/lib/utils';
+import fetch from 'node-fetch';
 
 const formatDate = (): string => {
   return new Date().toISOString();
